@@ -20,3 +20,27 @@ movie2	actor2	actor4	actor5
 - [ ] make it modular, i.e., make it possible to use it with any dataset
 - [ ] make it cli-based
 - [ ] allow for verbose output
+
+## Usage
+
+load the dataset and wait for a query.
+```bash
+dos -d <dataset.tsv>
+# or
+dos --dataset <dataset.tsv>
+```
+
+load and query at the same time
+```bash
+dos -d <dataset.tsv> -q <query>
+# or
+dos --dataset <dataset.tsv> --query <query>
+# query format: node1/node2
+```
+
+load and query at the same time, with verbose output
+```bash
+dos -d <dataset.tsv> -q <query> -v
+# or
+dos -d <dataset.tsv> -q <query> --verbose
+```
