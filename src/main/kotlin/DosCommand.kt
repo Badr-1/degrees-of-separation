@@ -12,7 +12,13 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
         "-d",
         "--dataset",
         metavar = "path/to/dataset",
-        help = "dataset should be a `csv` or `tsv`"
+        help = "dataset should have a consistent separator"
+    ).required()
+    private val separator: String by option(
+        "-s",
+        "--separator",
+        metavar = "separator",
+        help = "separator should be a single character"
     ).required()
     private val queryString: String? by option(
         "-q",
@@ -22,7 +28,7 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
     )
 
     override fun run() {
-        Dos.loadDataset(datasetPath, verbose)
+        Dos.loadDataset(datasetPath, separator, verbose)
         val query: Query = if (queryString != null) {
             if (queryString!!.matches(Regex(".+/.+"))) {
                 val input = queryString?.split("/")

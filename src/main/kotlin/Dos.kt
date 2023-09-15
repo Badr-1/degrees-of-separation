@@ -20,9 +20,8 @@ class Query(val from: String, val to: String)
 object Dos {
     private val networks = mutableMapOf<String, Network>()
     private val nodes = mutableMapOf<String, Node>()
-    fun loadDataset(path: String, verbose: Boolean = false) {
+    fun loadDataset(path: String, separator: String, verbose: Boolean = false) {
         val dataset = File(path)
-        val separator = if (dataset.extension == "csv") "," else "\t"
         val terminal = Terminal()
         val progress = terminal.progressAnimation {
             spinner(Spinner.Dots(TextColors.brightGreen))
@@ -33,8 +32,12 @@ object Dos {
             progress.start()
             progress.updateTotal(dataset.readLines().size.toLong())
         }
+        val delimiter = when(separator){
+            "\\t" -> "\t"
+            else -> separator
+        }
         for (line in dataset.readLines()) {
-            val entry = line.split(separator).toMutableList()
+            val entry = line.split(delimiter).toMutableList()
             val network = Network(entry[0])
             networks[network.name] = network
             entry.filter { it != network.name }.forEach { node ->
