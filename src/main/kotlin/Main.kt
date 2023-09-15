@@ -1,6 +1,8 @@
+import com.github.ajalt.clikt.completion.completionOption
+
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        DosCommand.main(args)
+        DosCommand.completionOption().main(args)
     }
 }
