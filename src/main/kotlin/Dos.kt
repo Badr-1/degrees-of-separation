@@ -1,5 +1,6 @@
 import com.github.ajalt.mordant.animation.progressAnimation
-import com.github.ajalt.mordant.rendering.TextColors
+import com.github.ajalt.mordant.rendering.TextColors.*
+import com.github.ajalt.mordant.rendering.TextStyles.*
 import com.github.ajalt.mordant.terminal.Terminal
 import com.github.ajalt.mordant.widgets.Spinner
 import java.io.File
@@ -16,15 +17,13 @@ class Node(val name: String) {
 }
 
 class Query(val from: String, val to: String)
-
 object Dos {
     private val networks = mutableMapOf<String, Network>()
     private val nodes = mutableMapOf<String, Node>()
     fun loadDataset(path: String, separator: String, verbose: Boolean = false) {
         val dataset = File(path)
-        val terminal = Terminal()
-        val progress = terminal.progressAnimation {
-            spinner(Spinner.Dots(TextColors.brightGreen))
+        val progress = Terminal().progressAnimation {
+            spinner(Spinner.Dots(brightGreen))
             text("Loading dataset...")
             completed()
         }
@@ -32,7 +31,7 @@ object Dos {
             progress.start()
             progress.updateTotal(dataset.readLines().size.toLong())
         }
-        val delimiter = when(separator){
+        val delimiter = when (separator) {
             "\\t" -> "\t"
             else -> separator
         }
@@ -70,21 +69,48 @@ object Dos {
         while (queue.isNotEmpty()) {
             val node = queue.poll()
             if (verbose) {
-                println("Visiting $node")
+                Terminal().println(bold("${"=".repeat(10)} Asking...${green(node)} ${"=".repeat(10)}"))
             }
             if (node == query.to) {
                 break
             }
             nodes[node]?.connections?.forEach { connection ->
                 if (!nodes[connection]?.visited!!) {
+                    Terminal().println(bold(cyan("Expanding Network...")))
+                    Terminal().println(
+                        bold(
+                            "Adding...${green(connection)} known by ${green(node)} from ${
+                                blue(
+                                    nodes[node]?.networks!!.intersect(
+                                        nodes[connection]?.networks!!.toSet()
+                                    ).toString()
+                                )
+                            }"
+                        )
+                    )
                     queue.add(connection)
                     nodes[connection]?.visited = true
                     nodes[connection]?.parent = nodes[node]
                     nodes[connection]?.distance = nodes[node]?.distance!! + 1
+                } else {
+                    if (verbose) {
+                        Terminal().println(bold(red("Already visited...$connection")))
+                    }
                 }
             }
+            if (verbose) {
+                Terminal().println(bold("${"=".repeat(10)} Visited...${green(node)} ${"=".repeat(10)}"))
+            }
         }
-        println("Degree of separation between ${query.from} and ${query.to} is ${nodes[query.to]?.distance}")
+        Terminal().println(
+            bold(
+                "Degree of separation between ${green(query.from)} and ${green(query.to)} is ${
+                    green(
+                        nodes[query.to]?.distance.toString()
+                    )
+                }"
+            )
+        )
         printResult(query)
     }
 
@@ -102,9 +128,9 @@ object Dos {
         path.add(query.from)
         path.reverse()
         path.forEach {
-            print(it)
+            Terminal().print(blue(it))
             if (it != path.last())
-                print(" -> ")
+                Terminal().print(green(" -> "))
         }
     }
 }

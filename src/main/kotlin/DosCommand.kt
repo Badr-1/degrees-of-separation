@@ -2,6 +2,9 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.mordant.rendering.TextStyles.*
+import com.github.ajalt.mordant.rendering.TextColors.*
+import com.github.ajalt.mordant.terminal.Terminal
 import com.github.kinquirer.KInquirer
 import com.github.kinquirer.components.promptInput
 import kotlin.system.exitProcess
@@ -34,7 +37,7 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
                 val input = queryString?.split("/")
                 Query(input!![0], input[1])
             } else {
-                println("Invalid query format")
+                Terminal().println(bold(red(("Invalid query format ⚠"))))
                 exitProcess(1)
             }
         } else {
@@ -47,7 +50,7 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
         if (Dos.validateQuery(query))
             Dos.findDegreeOfSeparation(query, verbose)
         else {
-            println("Invalid query")
+            Terminal().println(bold(red(("Invalid query ⚠"))))
             exitProcess(1)
         }
     }
