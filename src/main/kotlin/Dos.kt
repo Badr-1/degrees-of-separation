@@ -85,6 +85,10 @@ object Dos {
         printResult(query)
     }
 
+    fun validateQuery(query: Query): Boolean {
+        return nodes.containsKey(query.from) && nodes.containsKey(query.to)
+    }
+
     private fun printResult(query: Query) {
         var node = nodes[query.to]
         val path = mutableListOf<String>()

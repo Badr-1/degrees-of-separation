@@ -38,6 +38,11 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
             val input = queryString.split("/")
             Query(input[0], input[1])
         }
-        Dos.findDegreeOfSeparation(query, verbose)
+        if (Dos.validateQuery(query))
+            Dos.findDegreeOfSeparation(query, verbose)
+        else {
+            println("Invalid query")
+            exitProcess(1)
+        }
     }
 }
