@@ -1,9 +1,10 @@
-import com.github.ajalt.clikt.completion.completionOption
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
-import java.nio.file.Files
+import com.github.kinquirer.KInquirer
+import com.github.kinquirer.components.promptInput
+import kotlin.system.exitProcess
 
 object DosCommand : CliktCommand(name = "dos", help = "degree of separation finder") {
     private val verbose: Boolean by option("-v", "--verbose").flag()
@@ -13,7 +14,7 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
         metavar = "path/to/dataset",
         help = "dataset should be a `csv` or `tsv`"
     ).required()
-    private val query: String? by option(
+    private val queryString: String? by option(
         "-q",
         "--query",
         metavar = "from/to",
@@ -22,7 +23,21 @@ object DosCommand : CliktCommand(name = "dos", help = "degree of separation find
 
     override fun run() {
         Dos.loadDataset(datasetPath, verbose)
-        //TODO: find degree of separation
-        //TODO: print result
+        val query: Query = if (queryString != null) {
+            if (queryString!!.matches(Regex(".+/.+"))) {
+                val input = queryString?.split("/")
+                Query(input!![0], input[1])
+            } else {
+                println("Invalid query format")
+                exitProcess(1)
+            }
+        } else {
+            val queryString = KInquirer.promptInput(
+                "Enter query in the form of from/to: ",
+                validation = { it.matches(Regex(".+/.+")) })
+            val input = queryString.split("/")
+            Query(input[0], input[1])
+        }
+        Dos.findDegreeOfSeparation(query, verbose)
     }
 }

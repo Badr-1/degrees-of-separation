@@ -3,6 +3,8 @@ import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.terminal.Terminal
 import com.github.ajalt.mordant.widgets.Spinner
 import java.io.File
+import java.util.LinkedList
+import java.util.Queue
 
 class Network(val name: String)
 class Node(val name: String) {
@@ -12,6 +14,8 @@ class Node(val name: String) {
     var parent: Node? = null
     var distance: Int = 0
 }
+
+class Query(val from: String, val to: String)
 
 object Dos {
     private val networks = mutableMapOf<String, Network>()
@@ -48,15 +52,52 @@ object Dos {
                 Thread.sleep(200)
             }
         }
-        if (verbose)
+        if (verbose) {
             progress.stop()
+            println()
+        }
     }
 
-    fun findDegreeOfSeparation(from: String, to: String, verbose: Boolean = false) {
-        //TODO: not implemented yet
+    fun findDegreeOfSeparation(query: Query, verbose: Boolean = false) {
+        // Using BFS
+        val queue: Queue<String> = LinkedList()
+        queue.add(query.from)
+        nodes[query.from]?.visited = true
+
+        while (queue.isNotEmpty()) {
+            val node = queue.poll()
+            if (verbose) {
+                println("Visiting $node")
+            }
+            if (node == query.to) {
+                break
+            }
+            nodes[node]?.connections?.forEach { connection ->
+                if (!nodes[connection]?.visited!!) {
+                    queue.add(connection)
+                    nodes[connection]?.visited = true
+                    nodes[connection]?.parent = nodes[node]
+                    nodes[connection]?.distance = nodes[node]?.distance!! + 1
+                }
+            }
+        }
+        println("Degree of separation between ${query.from} and ${query.to} is ${nodes[query.to]?.distance}")
+        printResult(query)
     }
 
-    fun printResult() {
-        //TODO: not implemented yet
+    private fun printResult(query: Query) {
+        var node = nodes[query.to]
+        val path = mutableListOf<String>()
+        while (node?.parent != null) {
+            path.add(node.name)
+            node = node.parent
+        }
+        path.add(query.from)
+        path.reverse()
+        path.forEach {
+            print(it)
+            if (it != path.last())
+                print(" -> ")
+        }
     }
 }
