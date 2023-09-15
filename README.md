@@ -8,39 +8,51 @@ The original project used to take a list of movies and actors who played in them
 and answer queries about the Degree of Separation between two actors.
 
 ### Sample Input Format
-The original project used to take them separated by `/`, in this one I used `tsv` format.
 
+tab-separated values (tsv), comma-separated values (csv), or slash-separated values (ssv)
 ```tsv
 movie1	actor1	actor2	actor3
 movie2	actor2	actor4	actor5
 ```
 
+```csv
+movie1,actor1,actor2,actor3
+movie2,actor2,actor4,actor5
+```
+
+```ssv
+movie1/actor1/actor2/actor3
+movie2/actor2/actor4/actor5
+```
+
 ## Modifications
 
-- [ ] make it modular, i.e., make it possible to use it with any dataset
-- [ ] make it cli-based
-- [ ] allow for verbose output
+- [x] make it modular, i.e., make it possible to use it with any dataset
+- [x] make it cli-based
+- [x] allow for verbose output
 
 ## Usage
 
-load the dataset and wait for a query.
+You can either:
+- load the dataset and query all at once
+- load the dataset and query interactively
+
+### Load the dataset and query all at once
+
 ```bash
-dos -d <dataset.tsv>
-# or
-dos --dataset <dataset.tsv>
+dos -d <dataset> -q <query>
 ```
 
-load and query at the same time
+### Load the dataset and query interactively
+
 ```bash
-dos -d <dataset.tsv> -q <query>
-# or
-dos --dataset <dataset.tsv> --query <query>
-# query format: node1/node2
+dos -d <dataset>
 ```
 
-load and query at the same time, with verbose output
+### Verbose Option
+
 ```bash
-dos -d <dataset.tsv> -q <query> -v
+dos -d <dataset> -v
 # or
-dos -d <dataset.tsv> -q <query> --verbose
+dos -d <dataset> -q <query> -v
 ```
